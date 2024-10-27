@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectPfa.View.ForgetPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="White">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="20" VerticalOptions="CenterAndExpand">
+            <!-- Title -->
+            <VerticalStackLayout>
+            <Label Text="Forget " 
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   TextColor="#84989F"
+                   HorizontalOptions="Center" />
+                <Label Text=" password" 
+        FontSize="32"
+        FontAttributes="Bold"
+        TextColor="#84989F"
+        HorizontalOptions="Center" />
+
+               
+            </VerticalStackLayout>
+            <!-- Image -->
+          
+
+            <!-- Email Entry -->
+                <Entry Placeholder="Email"
+                       Keyboard="Email"
+                       FontSize="18"
+                       BackgroundColor="Transparent"/>
+
+            <!-- Send Button -->
+            <Button Text="Send"
+                    Style="{StaticResource LargeButtonStyle}"
+                    BackgroundColor="#84989F"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    FontSize="18"
+                    FontAttributes="Bold"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

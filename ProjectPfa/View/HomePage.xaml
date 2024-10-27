@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectPfa.View.HomePage"
+              NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#EAE7DC"
+            
+            >
+
+    <StackLayout Padding="10" Spacing="10">
+        <StackLayout Padding="0" Spacing="0" HorizontalOptions="Center">
+       
+     
+        <Image Source="image1.png"
+               Aspect="Fill"
+               WidthRequest="250"
+               HeightRequest="150"/>
+        
+        <Label Text="Welcome home"
+          Style="{StaticResource LabelWithSpecificShadow}" FontSize="20"/>
+        </StackLayout>
+
+
+        <Button Text="Sign in"
+          Style="{StaticResource LargeButtonStyle}"
+          Margin="0,0,0,0"
+            Clicked="OnSignInTapped"/>
+        
+        <VerticalStackLayout  HorizontalOptions="Center" Spacing="0">
+            
+            <Label Text="Don't have an account?" TextColor="#555555"/>
+            <Button Text="Sign up"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    Clicked="OnSignUpTapped"
+                     />
+        </VerticalStackLayout>
+    </StackLayout>
+
+</ContentPage>

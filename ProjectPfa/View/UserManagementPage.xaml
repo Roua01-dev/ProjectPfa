@@ -1,0 +1,94 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:View="clr-namespace:ProjectPfa.View"
+             x:Class="ProjectPfa.View.UserManagementPage"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:local="clr-namespace:ProjectPfa.ViewModel">
+
+    <ContentPage.BindingContext>
+        <local:UserManagementViewModel />
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="10">
+        <Label Text="User Management" 
+               FontSize="24" 
+               FontAttributes="Bold"
+               HorizontalOptions="Start" 
+               VerticalOptions="Start" />
+
+        <!-- Horizontal Stack Layout containing the Select All checkbox, SearchBar, and Add User button -->
+        <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+            <!-- "Select All" checkbox -->
+            <CheckBox x:Name="SelectAllCheckBox"
+                      VerticalOptions="Center"
+                      IsChecked="{Binding IsSelectAllChecked}"
+                      CheckedChanged="OnSelectAllCheckedChanged" />
+
+            <Label Text="Select All"
+                   VerticalOptions="Center"
+                   FontSize="14"
+                   FontAttributes="Bold" />
+
+            <SearchBar x:Name="UserSearchBar"
+           Placeholder="Search users"
+           VerticalOptions="End"
+           Text="{Binding SearchText}"
+           SearchCommand="{Binding SearchCommand}"
+           SearchCommandParameter="{Binding Text, Source={x:Reference UserSearchBar}}" />
+
+
+            <Button Text="Add User"
+                    Clicked="OnAddUserClicked"
+                    Style="{StaticResource LargeButtonStyle}"/>
+            
+            <Image Source="refresh1.png"
+                   Aspect="Center"
+                   WidthRequest="30"
+                   HeightRequest="30"
+                   GestureRecognizers="{TapGestureRecognizer Command={Binding RefreshCommand}}" />
+
+
+            
+            
+            
+        </HorizontalStackLayout>
+
+        <!-- CollectionView replacing the ListView -->
+        <CollectionView ItemsSource="{Binding Users}" SelectionMode="None"
+                        VerticalOptions="FillAndExpand">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Orientation="Horizontal" Padding="10">
+                        <!-- User Information Section -->
+                        <Image Source="{Binding ProfilePicturePath}"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               Aspect="AspectFill"
+                               Margin="0,0,10,0" />
+
+                        <StackLayout VerticalOptions="Center">
+                            <Label Text="{Binding Username}" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" />
+                            <Label Text="{Binding Email}" 
+                                   FontSize="14" 
+                                   TextColor="Gray" />
+                        </StackLayout>
+
+                        <!-- Buttons Section -->
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Spacing="5">
+                            <!-- Update Button -->
+                            <Button Text="Update"
+                                    Clicked="OnUpdateUserClicked"
+                                    BackgroundColor="LightBlue" />
+
+                            <!-- Delete Button -->
+                            <Button Text="Delete" Clicked="OnDeleteUserClicked" BackgroundColor="LightCoral" />
+                        </StackLayout>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+       
+    </StackLayout>
+</ContentPage>

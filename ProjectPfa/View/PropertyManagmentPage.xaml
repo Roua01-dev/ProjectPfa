@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectPfa.View.PropertyManagmentPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Grid">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal"/>
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="Transparent"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <ControlTemplate x:Key="SectionTemplate">
+                <Border WidthRequest="120" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#F0F0F1">
+                    <Label x:Name="label" Text="{TemplateBinding Content}" FontSize="14" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="CheckedStates">
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#4C65FF"/>
+                                        <Setter TargetName="label" Property="Label.Opacity" Value="1"/>
+                                        <Setter TargetName="label" Property="Label.TextColor" Value="White"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#F0F0F1"/>
+                                        <Setter TargetName="label" Property="Label.Opacity" Value="1"/>
+                                        <Setter TargetName="label" Property="Label.TextColor" Value="Black"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Border>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+        <!-- Contenu existant -->
+    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="32" BackgroundColor="#FEFEFE">
+
+        <!-- Contenu existant -->
+        <Grid Grid.Row="0" HorizontalOptions="FillAndExpand">
+            <Grid RowDefinitions="Auto,Auto,Auto" HorizontalOptions="FillAndExpand">
+                <!-- Entry for Finding a Place -->
+                <Entry Placeholder="Find a place" Text="" TextColor="#84989F" FontAttributes="Bold" FontSize="14" VerticalOptions="Center"/>
+                <!-- Map Image with Tap Gesture -->
+                <Image Source="map.png" WidthRequest="50" HorizontalOptions="End" VerticalOptions="Center"/>
+
+                <ScrollView Orientation="Horizontal" Grid.Row="2" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout x:Name="SectionList" Margin="0,15,0,0" BindableLayout.ItemsSource="{Binding Sections}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <RadioButton Content="{Binding .}" 
+                                             IsChecked="{Binding SelectedSection, Mode=TwoWay}"
+                                             ControlTemplate="{StaticResource SectionTemplate}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </Grid>
+            <ImageButton Source="add3.png"
+                BackgroundColor="Transparent"
+                WidthRequest="30"
+                HeightRequest="30"
+                CornerRadius="0"
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,20,20"
+                Command="{Binding AddPropertyCommand}" />
+
+        </Grid>
+
+     
+
+    </Grid>
+
+</ContentPage>

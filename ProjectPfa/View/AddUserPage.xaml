@@ -1,0 +1,104 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectPfa.View.AddUserPage"
+             xmlns:local="clr-namespace:ProjectPfa.ViewModel"
+             
+             NavigationPage.HasNavigationBar="False"
+            >
+
+    <ContentPage.BindingContext>
+        <local:AddUserViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- User Information Section -->
+        <StackLayout Grid.Row="0" Spacing="10">
+            <Entry Placeholder="Username"
+                   FontSize="18"
+                   HeightRequest="50"
+                   BackgroundColor="#FFF"
+                   Text="{Binding Username}" />
+
+            <Entry Placeholder="Email"
+                   Keyboard="Email"
+                   FontSize="18"
+                   HeightRequest="50"
+                   BackgroundColor="#FFF"
+                   Text="{Binding Email}" />
+        </StackLayout>
+
+        <!-- Security Section -->
+        <Grid Grid.Row="1" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Entry Placeholder="Password"
+                   IsPassword="True"
+                   FontSize="18"
+                   HeightRequest="50"
+                   BackgroundColor="#FFF"
+                   Margin="0,0,5,0"
+                   Text="{Binding Password}"
+                   Grid.Column="0" />
+
+            <Entry Placeholder="Confirm password"
+                   IsPassword="True"
+                   FontSize="18"
+                   HeightRequest="50"
+                   BackgroundColor="#FFF"
+                   Margin="5,0,0,0"
+                   Text="{Binding ConfirmPassword}"
+                   Grid.Column="1" />
+        </Grid>
+
+        <!-- Contact & Profile Section -->
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Mobile Number Entry -->
+            <Entry Placeholder="Mobile number"
+                   Keyboard="Telephone"
+                   FontSize="18"
+                   HeightRequest="50"
+                   BackgroundColor="#FFF"
+                   Margin="0,0,5,0"
+                   Text="{Binding MobileNumber}"
+                   Grid.Column="0" />
+
+            <!-- Profile Picture Upload Button -->
+            <Button Text="Upload Profile Picture"  
+                    Command="{Binding UploadProfilePictureCommand}"
+                    Grid.Column="1" />
+        </Grid>
+
+        <!-- Profile Picture Preview -->
+        <Image Source="{Binding ProfilePicturePath}" 
+       HeightRequest="100" 
+       WidthRequest="100" 
+       Margin="0,10,0,0"
+       HorizontalOptions="Center"
+       Grid.Row="3" />
+
+
+        <!-- Create Account Button Centered at Bottom -->
+        <Button Text="Create Account"
+                Style="{StaticResource LargeButtonStyle}"
+                Command="{Binding CreateAccountClicked}"
+                Grid.Row="4"
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Margin="0,20,0,0" />
+    </Grid>
+</ContentPage>

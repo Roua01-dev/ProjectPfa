@@ -1,0 +1,66 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             x:Class="ProjectPfa.View.AddPropertyPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView Padding="16">
+        <StackLayout>
+            <Label Text="Add a Property" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,0,0,10" TextColor="#697A80"/>
+            <Entry Placeholder="Title" Text="{Binding Title}" FontSize="18" Margin="0,0,0,10"/>
+
+            <SearchBar Placeholder="Search location" 
+                       Text="{Binding SearchText}" 
+                       SearchCommand="{Binding SearchLocationCommand}"/>
+
+            <maps:Map x:Name="PropertyMap"
+                      MapType="Street"
+                      VerticalOptions="FillAndExpand"
+                      HeightRequest="300"
+                      IsShowingUser="True">
+                <maps:Map.Pins>
+                    <maps:Pin Label="{Binding Title}"
+                              Address="{Binding FullAddress}"
+                              Location="{Binding PropertyLocation}"/>
+                </maps:Map.Pins>
+            </maps:Map>
+
+           
+            <!-- Property Details -->
+            <Entry Placeholder="Price" Text="{Binding Price}" Keyboard="Numeric" FontSize="18" Margin="0,0,0,10"/>
+            <StackLayout Orientation="Horizontal" Spacing="10" Margin="0,10,0,5">
+                <Entry Placeholder="Bedrooms" Text="{Binding Bedrooms}" Keyboard="Numeric" FontSize="18"/>
+                <Entry Placeholder="Bathrooms" Text="{Binding Bathrooms}" Keyboard="Numeric" FontSize="18"/>
+                <Entry Placeholder="Garage" Text="{Binding Garage}" Keyboard="Numeric" FontSize="18"/>
+            </StackLayout>
+
+            <!-- Property Status (CheckBoxes) -->
+            <Label Text="Property Status:" FontSize="18" Margin="0,10,0,5"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="20">
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsTrending}" Color="Blue"/>
+                    <Label Text="Trending" VerticalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsPopular}" Color="Blue"/>
+                    <Label Text="Popular" VerticalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsForSale}" Color="Blue"/>
+                    <Label Text="For Sale" VerticalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsForRent}" Color="Blue"/>
+                    <Label Text="For Rent" VerticalOptions="Center"/>
+                </StackLayout>
+            </StackLayout>
+
+            <!-- Description -->
+            <Label Text="Description:" FontSize="18" Margin="0,10,0,5"/>
+            <Editor Text="{Binding Description}" HeightRequest="100" FontSize="16" HorizontalOptions="FillAndExpand"/>
+
+            <!-- Save Button -->
+            <Button Text="Save Property" Command="{Binding SaveCommand}" Margin="0,20,0,0"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
