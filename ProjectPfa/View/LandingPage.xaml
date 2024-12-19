@@ -1,95 +1,54 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ct="clr-namespace:ProjectPfa.Control"
-             xmlns:view="clr-namespace:ProjectPfa.View"
-             xmlns:local="clr-namespace:ProjectPfa.ViewModel"
-             x:Class="ProjectPfa.View.LandingPage" FlyoutBehavior="Flyout" Shell.ForegroundColor="White"
-             >
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:ct="clr-namespace:ProjectPfa.Control"
+       xmlns:view="clr-namespace:ProjectPfa.View"
+       xmlns:local="clr-namespace:ProjectPfa.ViewModel"
+       x:Class="ProjectPfa.View.LandingPage"
+       FlyoutBehavior="Flyout"
+       Shell.ForegroundColor="Black">
 
-
-
-
-
-    <Shell.Resources>
-        <ResourceDictionary>
-            <Style TargetType="Grid">
-                <Setter Property="VisualStateManager.VisualStateGroups">
-                    <VisualStateGroupList>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal"/>
-                            <VisualState x:Name="Selected">
-                                <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="Transparent"/>
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateGroupList>
-                </Setter>
-            </Style>
-
-            <ControlTemplate x:Key="SectionTemplate">
-                <Border WidthRequest="120" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#F0F0F1">
-                    <Label x:Name="label" Text="{TemplateBinding Content}" FontSize="14" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <VisualStateManager.VisualStateGroups>
-                        <VisualStateGroupList>
-                            <VisualStateGroup x:Name="CheckedStates">
-                                <VisualState x:Name="Checked">
-                                    <VisualState.Setters>
-                                        <Setter Property="BackgroundColor" Value="#4C65FF"/>
-                                        <Setter TargetName="label" Property="Label.Opacity" Value="1"/>
-                                        <Setter TargetName="label" Property="Label.TextColor" Value="White"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked">
-                                    <VisualState.Setters>
-                                        <Setter Property="BackgroundColor" Value="#F0F0F1"/>
-                                        <Setter TargetName="label" Property="Label.Opacity" Value="1"/>
-                                        <Setter TargetName="label" Property="Label.TextColor" Value="Black"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateGroupList>
-                    </VisualStateManager.VisualStateGroups>
-                </Border>
-            </ControlTemplate>
-        </ResourceDictionary>
-    </Shell.Resources>
-
+    <!-- Flyout Header -->
     <Shell.FlyoutHeader>
-        <Border BackgroundColor="#84989F">
-            <VerticalStackLayout Padding="5"  >
+        <Border BackgroundColor="#34568B">
+            <VerticalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center">
+                <!-- User Profile Picture -->
+             
 
-                <Frame WidthRequest="70" HeightRequest="70" VerticalOptions="Center" HorizontalOptions="Center" CornerRadius="50" BorderColor="Transparent" BackgroundColor="#FFFFFF" Padding="0" IsClippedToBounds="True">
-                    <Image Source="{Binding ProfilePicturePath}" Aspect="AspectFill" />
-                </Frame>
-                <Label Text="{Binding Username}" TextColor="Black" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center"/>
-
+                <!-- Username -->
+                <Label Text="{Binding Username}" 
+                       FontSize="18" 
+                       TextColor="#FFFFFF" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Border>
-
     </Shell.FlyoutHeader>
 
-
-    <FlyoutItem Title="Home Page " >
+    <!-- Flyout Items -->
+    <FlyoutItem Title="Add Property">
         <Tab>
-            <ShellContent ContentTemplate="{DataTemplate view:LandingPage}" />
+            <ShellContent ContentTemplate="{DataTemplate view:PropertyManagmentPage}" />
         </Tab>
     </FlyoutItem>
-    <FlyoutItem Title="User Management "
-           >
+
+    <FlyoutItem Title="Manage Client">
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate view:UserManagementPage}" />
         </Tab>
     </FlyoutItem>
 
-
-
-
-    <ShellContent FlyoutItemIsVisible="False" >
-
-     
-
-
-    </ShellContent>
+    <!-- Footer -->
+    <Shell.FlyoutFooter>
+        <StackLayout HorizontalOptions="Center" VerticalOptions="EndAndExpand" Padding="10">
+            <ImageButton Source="logout.png"
+                         WidthRequest="40"
+                         HeightRequest="40"
+                         BackgroundColor="Transparent"
+                         Command="{Binding LogoutCommand}" />
+            <Label Text="Logout"
+                   FontSize="14"
+                   TextColor="Red"
+                   HorizontalOptions="Center" />
+        </StackLayout>
+    </Shell.FlyoutFooter>
 </Shell>

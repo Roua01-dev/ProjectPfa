@@ -1,26 +1,64 @@
-using ProjectPfa.Models;
-using ProjectPfa.Data;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ProjectPfa.ViewModel;
 using ProjectPfa.Models;
-
+using ProjectPfa.Data;
+using System;
+using System.Collections.ObjectModel;
+ 
 namespace ProjectPfa.View
 {
     public partial class UserManagementPage : ContentPage
     {
-        private Database _database;
         private readonly UserManagementViewModel _viewModel;
-
-        public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
+        private DatabaseService _database;
 
         public UserManagementPage()
         {
             InitializeComponent();
-            _database = new Database();
-            LoadUsers();
-            _viewModel= BindingContext as UserManagementViewModel;
+            _database = new DatabaseService();
+
+            _viewModel = new UserManagementViewModel();
+            BindingContext = _viewModel;
         }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            // Load users when the page appears
+            await _viewModel.LoadUsersAsync();
+        }
+
+       
+
+        private async void UpdateUserCommand(object sender, EventArgs e)
+        {
+            // Get the user associated with the clicked button
+            if (sender is Button button && button.BindingContext is User user)
+            {
+                // Navigate to Update User Page, passing the selected user
+                await Navigation.PushAsync(new UpdateUserPage(user));
+            }
+        }
+
+        //private async void DeleteUserCommand(object sender, EventArgs e)
+        //{
+        //    if (sender is Button button && button.BindingContext is User user)
+        //    {
+        //        // Confirm deletion
+        //        bool confirmDelete = await DisplayAlert("Confirm Delete", $"Are you sure you want to delete {user.Username}?", "Yes", "No");
+        //        if (confirmDelete)
+        //        {
+        //            await _viewModel.DeleteUserAsync(user);
+        //        }
+        //    }
+        //}
+
+        //private void OnSelectAllCheckedChanged(object sender, CheckedChangedEventArgs e)
+        //{
+        //    // Update the Select All state in the ViewModel
+        //    _viewModel.SelectAllUsers(e.Value);
+        //}
+
+
 
         private async void OnDeleteUserClicked(object sender, EventArgs e)
         {
@@ -36,20 +74,13 @@ namespace ProjectPfa.View
             }
         }
 
-        private async void OnAddUserClicked (object sender ,EventArgs e)
+        private async void OnAddUserClicked(object sender, EventArgs e)
         {
+            // Navigate to AddUserProperty page
             await Navigation.PushAsync(new AddUserPage());
         }
 
-        private async void LoadUsers()
-        {
-            var users = await _database.GetUsersAsync();
-            Users.Clear();
-            foreach (var user in users)
-            {
-                Users.Add(user);
-            }
-        }
+
 
         private async void OnUpdateUserClicked(object sender, EventArgs e)
         {
@@ -64,13 +95,6 @@ namespace ProjectPfa.View
             }
         }
 
-        private void OnSelectAllCheckedChanged(object sender, CheckedChangedEventArgs e)
-        {
-            // Access the ViewModel and update the "IsSelectAllChecked" property
-            if (BindingContext is UserManagementViewModel viewModel)
-            {
-             //   viewModel.IsSelectAllChecked = e.Value;
-            }
-        }
+
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using ProjectPfa.Services;
 
 namespace ProjectPfa.View;
 
@@ -10,14 +9,12 @@ public partial class HomePage : ContentPage
 
 	{
         InitializeComponent();
-        SaveProperties();
+        //SaveProperties();
 
 
     }
     private async void SaveProperties()
     {
-        var propertyService = new PropertyService();
-        await propertyService.SaveAllPropertiesAsync();
     }
     private  void OnSignUpTapped(object sender, EventArgs e)
     {

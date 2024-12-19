@@ -13,7 +13,7 @@
 
 
             <Style x:Key="LabelWithSpecificShadow" TargetType="Label">
-                <Setter Property="FontSize" Value="32"/>
+                <Setter Property="FontSize" Value="50"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="TextColor" Value="#697A80"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
@@ -22,7 +22,7 @@
                 <Setter Property="BackgroundColor" Value="Transparent"/>
                 <Setter Property="Shadow">
                     <Setter.Value>
-                        <Shadow Brush="#A7C2CC" Offset="5, 5" Radius="2"/>
+                        <Shadow Brush="#A7C2CC" Offset="5, 2" Radius="70"/>
                     </Setter.Value>
                 </Setter>
             </Style>
@@ -47,8 +47,8 @@
             <!-- Style for Transparent Button -->
             <Style x:Key="TransparentButtonStyle" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="Transparent"/>
-                <Setter Property="TextColor" Value="#58A8FF"/>
-                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="TextColor" Value="#697A80" />
+                <Setter Property="FontSize" Value="25"/>
                 <Setter Property="Padding" Value="0"/>
             </Style>
 

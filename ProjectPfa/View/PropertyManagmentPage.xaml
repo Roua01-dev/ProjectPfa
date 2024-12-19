@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ct="clr-namespace:ProjectPfa.Control"
              x:Class="ProjectPfa.View.PropertyManagmentPage"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#EAE7DC">
 
+    <!-- Ressources -->
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Grid">
@@ -21,6 +24,7 @@
                 </Setter>
             </Style>
 
+            <!-- Template pour les sections -->
             <ControlTemplate x:Key="SectionTemplate">
                 <Border WidthRequest="120" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#F0F0F1">
                     <Label x:Name="label" Text="{TemplateBinding Content}" FontSize="14" HorizontalOptions="Center" VerticalOptions="Center"/>
@@ -49,46 +53,87 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <!-- Contenu principal -->
+    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*,Auto" Padding="10" BackgroundColor="#FEFEFE">
 
-        <!-- Contenu existant -->
-    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="32" BackgroundColor="#FEFEFE">
+        <!-- Barre de recherche et icône carte -->
+        <HorizontalStackLayout Grid.Row="0" Grid.ColumnSpan="2" Spacing="20" VerticalOptions="Center" HorizontalOptions="Center">
+            <!-- Barre de recherche sur toute la largeur -->
+            <Entry Placeholder="Find a place"
+           Text=""
+           TextColor="#84989F"
+           FontAttributes="Bold"
+           FontSize="22"
+           HorizontalOptions="FillAndExpand"
+           VerticalOptions="Center" />
 
-        <!-- Contenu existant -->
-        <Grid Grid.Row="0" HorizontalOptions="FillAndExpand">
-            <Grid RowDefinitions="Auto,Auto,Auto" HorizontalOptions="FillAndExpand">
-                <!-- Entry for Finding a Place -->
-                <Entry Placeholder="Find a place" Text="" TextColor="#84989F" FontAttributes="Bold" FontSize="14" VerticalOptions="Center"/>
-                <!-- Map Image with Tap Gesture -->
-                <Image Source="map.png" WidthRequest="50" HorizontalOptions="End" VerticalOptions="Center"/>
+            <!-- Icône de la carte -->
+            <Image Source="map.png"
+           WidthRequest="50"
+           HeightRequest="50"
+           VerticalOptions="Center"
+           HorizontalOptions="End">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenMapCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </HorizontalStackLayout>
 
-                <ScrollView Orientation="Horizontal" Grid.Row="2" HorizontalScrollBarVisibility="Never">
-                    <HorizontalStackLayout x:Name="SectionList" Margin="0,15,0,0" BindableLayout.ItemsSource="{Binding Sections}" Spacing="10">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <RadioButton Content="{Binding .}" 
-                                             IsChecked="{Binding SelectedSection, Mode=TwoWay}"
-                                             ControlTemplate="{StaticResource SectionTemplate}" />
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
-                </ScrollView>
-            </Grid>
-            <ImageButton Source="add3.png"
-                BackgroundColor="Transparent"
-                WidthRequest="30"
-                HeightRequest="30"
-                CornerRadius="0"
-                Grid.Row="1"
-                Grid.Column="1"
-                HorizontalOptions="End"
-                VerticalOptions="End"
-                Margin="0,0,20,20"
-                Command="{Binding AddPropertyCommand}" />
+        <!-- Sections (Filtrage) -->
+        <ScrollView Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Never" Margin="0,15,0,15">
+            <HorizontalStackLayout x:Name="SectionList"
+                                   BindableLayout.ItemsSource="{Binding Sections}"
+                                   Spacing="10">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding .}"
+                                  IsChecked="{Binding SelectedSection, Mode=TwoWay}"
+                                  CheckedChanged="RadioButton_CheckedChanged"
+                                 ControlTemplate="{StaticResource SectionTemplate}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
 
-        </Grid>
+        <!-- Liste des propriétés -->
+        <CollectionView Grid.Row="2" Grid.ColumnSpan="2"
+                ItemsSource="{Binding FilteredProperties}"  
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedProperty}"
+                SelectionChanged="OnPropertySelected">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="20" VerticalItemSpacing="20"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HeightRequest="210" WidthRequest="160">
+                        <VerticalStackLayout Spacing="10">
+                            <ct:CustomBorder HeightRequest="160" StrokeThickness="0">
+                                <Image Source="{Binding DefaultImage}" Aspect="AspectFill"
+                               HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                            </ct:CustomBorder>
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Address}" TextColor="Black" FontSize="12" Opacity="0.5"/>
+                                <Label Text="{Binding Price ,StringFormat='${0,###,###}'}" TextColor="Black" FontSize="12" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-     
+
+        <!-- Bouton Ajouter une propriété -->
+        <ImageButton Source="add3.png"
+                     BackgroundColor="Transparent"
+                     WidthRequest="45"
+                     HeightRequest="45"
+                     Grid.Row="3"
+                     Grid.Column="1"
+                     HorizontalOptions="End"
+                     VerticalOptions="End"
+                     Margin="0,20,20,0"
+                     Command="{Binding AddPropertyCommand}" />
 
     </Grid>
-
 </ContentPage>

@@ -5,30 +5,23 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ProjectPfa.Data;
 using ProjectPfa.Models;
-using ProjectPfa.Services;
 using ProjectPfa.View;
 
 namespace ProjectPfa.ViewModel
 {
     public class SignUpViewModel : BaseViewModel
     {
-        private Database _database;
         private string _email;
         private string _password;
         private string _confirmPassword;
         private string _mobileNumber;
         private string _username;
         private string _profilePicturePath;
-        private ObservableCollection<string> _countries;
 
         public SignUpViewModel()
         {
-            _database = new Database();
             SignUpCommand = new Command(async () => await OnSignUp());
             SignInCommand = new Command(OnSignIn);
-
-            // Load countries
-            _countries = new ObservableCollection<string> { "TN" }; // Simplified for example
         }
 
         public string Email
@@ -91,43 +84,35 @@ namespace ProjectPfa.ViewModel
             }
         }
 
-        public ObservableCollection<string> Countries
-        {
-            get => _countries;
-            set
-            {
-                _countries = value;
-                OnPropertyChanged();
-            }
-        }
-
         public ICommand SignUpCommand { get; }
         public ICommand SignInCommand { get; }
         public ICommand UploadProfilePictureCommand => new Command(async () => await UploadProfilePicture());
 
 
+
         private async Task UploadProfilePicture()
         {
-            var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+            var result = await FilePicker.PickAsync(new PickOptions
             {
-                Title = "Please pick a photo"
+                FileTypes = FilePickerFileType.Images
             });
 
             if (result != null)
             {
-                var stream = await result.OpenReadAsync();
-                var filePath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
-                using (var fileStream = File.OpenWrite(filePath))
-                {
-                    await stream.CopyToAsync(fileStream);
-                }
 
-                ProfilePicturePath = filePath;
+                ProfilePicturePath = result.FullPath;
+                Debug.WriteLine(" ProfilePicturePath", ProfilePicturePath);
+
+            }
+            else
+            {
+                Debug.WriteLine("No image was selected.");
             }
         }
 
         private async Task OnSignUp()
         {
+            // Validate input
             if (!IsValidEmail(Email))
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Please enter a valid email address.", "OK");
@@ -146,15 +131,16 @@ namespace ProjectPfa.ViewModel
                 return;
             }
 
-            if (!IsStrongPassword(Password))
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.", "OK");
-                return;
-            }
+            //if (!IsStrongPassword(Password))
+            //{
+            //    await Application.Current.MainPage.DisplayAlert("Error", "Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.", "OK");
+            //    return;
+            //}
 
-            if (await IsEmailInUse(Email))
+
+            if (string.IsNullOrEmpty(Password))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Email is already in use.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "password.", "OK");
                 return;
             }
 
@@ -164,6 +150,7 @@ namespace ProjectPfa.ViewModel
                 return;
             }
 
+            // Create a new user object
             var user = new User
             {
                 Email = Email,
@@ -174,22 +161,27 @@ namespace ProjectPfa.ViewModel
                 ProfilePicturePath = ProfilePicturePath
             };
 
-            await _database.SaveUserAsync(user);
-            Debug.WriteLine($"User {Email} created successfully!");
+            // Add the user to the database
+            int result = await DatabaseService.AddUserAsync(user);
 
-            // Navigate to SignIn page
-            App.Current.MainPage = new SignIn();
-           // await Application.Current.MainPage.Navigation.PushAsync(new SignIn());
+            if (result > 0)
+            {
+                Debug.WriteLine($"User {Email} created successfully!");
+
+                // Navigate to SignIn page
+                App.Current.MainPage = new SignIn();
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Failed to create account. Please try again.", "OK");
+            }
         }
 
         private void OnSignIn()
         {
-            // Logic for navigating to the SignIn page
-             App.Current.MainPage = new SignIn();
-            // Application.Current.MainPage.Navigation.PushAsync(new SignIn());
+            // Navigate to the SignIn page
+            App.Current.MainPage = new SignIn();
         }
-
-    
 
         private bool IsValidEmail(string email)
         {
@@ -218,12 +210,6 @@ namespace ProjectPfa.ViewModel
             return password.Length >= 8 && Regex.IsMatch(password, @"[A-Z]") &&
                    Regex.IsMatch(password, @"[a-z]") && Regex.IsMatch(password, @"[0-9]") &&
                    Regex.IsMatch(password, @"[\W]");
-        }
-
-        private async Task<bool> IsEmailInUse(string email)
-        {
-            var user = await _database.GetUserByEmailAsync(email);
-            return user != null;
         }
     }
 }

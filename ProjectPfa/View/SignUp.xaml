@@ -1,113 +1,149 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProjectPfa.View.SignUp"
              NavigationPage.HasNavigationBar="False"
              xmlns:local="clr-namespace:ProjectPfa.ViewModel"
-             BackgroundColor="#F9F9F9">
+             BackgroundColor="#F7F9FC">
+
     <ContentPage.BindingContext>
         <local:SignUpViewModel />
     </ContentPage.BindingContext>
 
-    <ScrollView>
-        <StackLayout Padding="20" Spacing="15">
+    <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="20">
+        <StackLayout Padding="20" Spacing="20">
+
             <!-- Title -->
             <Label Text="Create Account"
-                   FontSize="32"
+                   FontSize="36"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   TextColor="#333"/>
+                   TextColor="#34568B"/>
 
-            <!-- Social Sign Up Buttons -->
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
-                <Frame CornerRadius="25" BackgroundColor="#DB4437" Padding="0"  HeightRequest="40" WidthRequest="150" >
-                    <StackLayout Orientation="Horizontal" Spacing="10" Padding="10, 5" >
-                        <Image Source="google.png" WidthRequest="24" HeightRequest="24"/>
-                        <Label Text="Google" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    </StackLayout>
-                </Frame>
-                <Frame CornerRadius="25" BackgroundColor="#3B5998" Padding="0" HeightRequest="40" WidthRequest="150">
-                    <StackLayout Orientation="Horizontal" Spacing="10" Padding="10, 5">
-                        <Image Source="file.png" WidthRequest="24" HeightRequest="24"/>
-                        <Label Text="Facebook" TextColor="White" VerticalOptions="Center" />
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
+            <!-- Profile Picture Upload -->
+            <Frame BorderColor="#CCCCCC" 
+                   BackgroundColor="#E6EAF0"
+                   CornerRadius="75"
+                   HeightRequest="150"
+                   WidthRequest="150"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   Padding="0">
 
-            <!-- Or Label -->
-            <Label Text="Or"
-                   FontSize="18"
-                   TextColor="#666"
-                   HorizontalOptions="Center"/>
+                <Image Source="{Binding ProfilePicturePath}" 
+                       HeightRequest="140" 
+                       WidthRequest="140"
+                       Aspect="AspectFill">
+                    <Image.Clip>
+                        <EllipseGeometry Center="70,70" RadiusX="70" RadiusY="70" />
+                    </Image.Clip>
+                </Image>
+                
+                
+                
+              
+            </Frame>
+
+            <Button Text="Upload Profile Picture"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#34568B"
+                    TextColor="White"
+                    Command="{Binding UploadProfilePictureCommand}"/>
 
             <!-- Username Entry -->
-            <Entry Placeholder="Username"
-                   FontSize="18"
-                   HeightRequest="50"
-                   BackgroundColor="#FFF"
-                   Margin="0,10,0,0"
-                   Text="{Binding Username}" />
+            <Frame BorderColor="#CCCCCC"
+                   CornerRadius="25"
+                   Padding="10"
+                   BackgroundColor="White">
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_icon.png" WidthRequest="25" HeightRequest="25" Margin="5,0,10,0"/>
+                    <Entry Placeholder="Username" 
+                           FontSize="18"
+                           Text="{Binding Username}"/>
+                </StackLayout>
+            </Frame>
 
             <!-- Email Entry -->
-            <Entry Placeholder="Email"
-                   Keyboard="Email"
-                   FontSize="18"
-                   HeightRequest="50"
-                   BackgroundColor="#FFF"
-                   Margin="0,10,0,0"
-                   Text="{Binding Email}" />
+            <Frame BorderColor="#CCCCCC"
+                   CornerRadius="25"
+                   Padding="10"
+                   BackgroundColor="White">
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="email_icon.png" WidthRequest="25" HeightRequest="25" Margin="5,0,10,0"/>
+                    <Entry Placeholder="Email"
+                           Keyboard="Email"
+                           FontSize="18"
+                           Text="{Binding Email}"/>
+                </StackLayout>
+            </Frame>
 
             <!-- Password and Confirm Password Entries -->
-            <Grid Margin="0,10,0,0">
+            <Grid ColumnSpacing="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Entry Placeholder="Password"
-                       IsPassword="True"
-                       FontSize="18"
-                       HeightRequest="50"
-                       BackgroundColor="#FFF"
-                       Margin="0,10,5,0" 
-                       Text="{Binding Password}"
-                       Grid.Column="0" />
-                <Entry Placeholder="Confirm password"
-                       IsPassword="True"
-                       FontSize="18"
-                       HeightRequest="50"
-                       BackgroundColor="#FFF"
-                       Margin="5,10,0,0" 
-                       Text="{Binding ConfirmPassword}"
-                       Grid.Column="1" />
+                <Frame BorderColor="#CCCCCC"
+                       CornerRadius="25"
+                       Padding="10"
+                       BackgroundColor="White"
+                       Grid.Column="0">
+                    <StackLayout Orientation="Horizontal">
+                        <Image Source="password_icon.png" WidthRequest="25" HeightRequest="25" Margin="5,0,10,0"/>
+                        <Entry Placeholder="Password"
+                               IsPassword="True"
+                               FontSize="18"
+                               Text="{Binding Password}"/>
+                    </StackLayout>
+                </Frame>
+                <Frame BorderColor="#CCCCCC"
+                       CornerRadius="25"
+                       Padding="10"
+                       BackgroundColor="White"
+                       Grid.Column="1">
+                    <StackLayout Orientation="Horizontal">
+                        <Image Source="password_icon.png" WidthRequest="25" HeightRequest="25" Margin="5,0,10,0"/>
+                        <Entry Placeholder="Confirm Password"
+                               IsPassword="True"
+                               FontSize="18"
+                               Text="{Binding ConfirmPassword}"/>
+                    </StackLayout>
+                </Frame>
             </Grid>
 
             <!-- Mobile Number Entry -->
-            <Entry Placeholder="Mobile number"
-                   Keyboard="Telephone"
-                   FontSize="18"
-                   HeightRequest="50"
-                   BackgroundColor="#FFF"
-                   Margin="0,10,0,0"
-                   Text="{Binding MobileNumber}" />
-
-            <!-- Profile Picture Upload -->
-            <Button Text="Upload Profile Picture"  
-                    Command="{Binding UploadProfilePictureCommand}"
-                    Margin="0,10,0,0" />
-            <Image Source="{Binding ProfilePicture}" HeightRequest="100" WidthRequest="100" Margin="0,10,0,0" />
+            <Frame BorderColor="#CCCCCC"
+                   CornerRadius="25"
+                   Padding="10"
+                   BackgroundColor="White">
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="phone_icon.png" WidthRequest="25" HeightRequest="25" Margin="5,0,10,0"/>
+                    <Entry Placeholder="Mobile Number"
+                           Keyboard="Telephone"
+                           FontSize="18"
+                           Text="{Binding MobileNumber}"/>
+                </StackLayout>
+            </Frame>
 
             <!-- Sign Up Button -->
-            <Button Text="Sign up"
-                    Style="{StaticResource LargeButtonStyle}"
-                    Command="{Binding SignUpCommand}"
-                    Margin="0,0,0,0" />
+            <Button Text="Sign Up"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#34568B"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Command="{Binding SignUpCommand}"/>
 
             <!-- Sign In Link -->
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                <Label Text="Already have an account?" TextColor="#555555"/>
-                <Button Text="Sign in"
-                        Style="{StaticResource TransparentButtonStyle}"
-                        Command="{Binding SignInCommand}"/>
+                <Label Text="Already have an account? "
+                       FontSize="16"
+                       TextColor="#555555"/>
+                <Button Text="Sign In"
+                        TextColor="#34568B"
+                        FontAttributes="Bold"
+                        Command="{Binding SignInCommand}"
+                        Style="{StaticResource TransparentButtonStyle}"/>
             </StackLayout>
         </StackLayout>
     </ScrollView>

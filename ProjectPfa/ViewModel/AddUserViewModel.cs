@@ -8,36 +8,12 @@ namespace ProjectPfa.ViewModel
 {
     public class AddUserViewModel : BaseViewModel
     {
-        private readonly Database _database;
-        private readonly Page _page;
-
         private string _username;
         private string _email;
         private string _password;
         private string _confirmPassword;
         private string _mobileNumber;
         private string _profilePicturePath;
-
-        public Command CreateAccountClicked { get; }
-        public Command UploadProfilePictureCommand { get; }
-
-        public AddUserViewModel() // Passing Page instance for alerts
-        {
-            _database = new Database();
-            CreateAccountClicked = new Command(async () => await CreateAccountClickedAsync());
-            UploadProfilePictureCommand = new Command(async () => await UploadProfilePictureAsync());
-        }
-
-        public ImageSource ProfilePicture
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ProfilePicturePath))
-                    return null;
-
-                return ImageSource.FromFile(ProfilePicturePath);
-            }
-        }
 
         public string Username
         {
@@ -75,75 +51,81 @@ namespace ProjectPfa.ViewModel
             set => SetProperty(ref _profilePicturePath, value);
         }
 
+        public ICommand CreateAccountCommand { get; }
+        public ICommand UploadProfilePictureCommand { get; }
+
+        public AddUserViewModel()
+        {
+            CreateAccountCommand = new Command(async () => await CreateAccountAsync());
+            UploadProfilePictureCommand = new Command(async () => await UploadProfilePictureAsync());
+        }
+
+        private async Task CreateAccountAsync()
+        {
+            if (IsInputValid())
+            {
+                try
+                {
+                    var newUser = new User
+                    {
+                        Username = Username,
+                        Email = Email,
+                        Password = Password, // Hash password in DatabaseService
+                        MobileNumber = MobileNumber,
+                        ProfilePicturePath = ProfilePicturePath
+                    };
+
+                    // Add user to the database
+                    var result = await DatabaseService.AddUserAsync(newUser);
+
+                    if (result > 0)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Success", "Account created successfully!", "OK");
+                        await Application.Current.MainPage.Navigation.PopAsync(); // Navigate back
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", "Failed to create account. Please try again.", "OK");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+                }
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Please fill all fields correctly. Make sure passwords match.", "OK");
+            }
+        }
+
         private async Task UploadProfilePictureAsync()
         {
             var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
             {
-                Title = "Please pick a photo"
+                Title = "Select a Profile Picture"
             });
 
             if (result != null)
             {
-                var stream = await result.OpenReadAsync();
                 var filePath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
-                using (var fileStream = File.OpenWrite(filePath))
+                using (var stream = await result.OpenReadAsync())
+                using (var fileStream = File.Create(filePath))
                 {
                     await stream.CopyToAsync(fileStream);
                 }
 
                 ProfilePicturePath = filePath;
-                OnPropertyChanged(nameof(ProfilePicture)); // Notify the UI of the change
-            }
-        }
-
-        private async Task CreateAccountClickedAsync()
-        {
-            if (IsInputValid())
-            {
-                // Check if email already exists
-                var existingUser = await _database.GetUserByEmailAsync(Email);
-                if (existingUser != null)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Email is already in use. Please choose a different email.", "OK");
-                    return;
-                }
-
-                var newUser = new User
-                {
-                    Username = Username,
-                    Email = Email,
-                    Password = Password, // Ensure password is hashed if needed
-                    ConfirmPassword = ConfirmPassword,
-                    MobileNumber = MobileNumber,
-                    ProfilePicturePath = ProfilePicturePath
-                };
-
-                await _database.SaveUserAsync(newUser);
-
-                // Show success message
-                await Application.Current.MainPage.DisplayAlert("Success", "Account created successfully!", "OK");
-            }
-            else
-            {
-                // Handle validation errors
-                await Application.Current.MainPage.DisplayAlert("Error", "Please check your input. Make sure all fields are filled correctly and passwords match.", "OK");
+                OnPropertyChanged(nameof(ProfilePicturePath));
             }
         }
 
         private bool IsInputValid()
         {
-            // Ensure all fields are filled
-            if (string.IsNullOrEmpty(Username) ||
-                string.IsNullOrEmpty(Email) ||
-                string.IsNullOrEmpty(Password) ||
-                Password != ConfirmPassword)
-            {
-                return false;
-            }
-
-            // You can add more validations here if needed
-
-            return true;
+            return !string.IsNullOrWhiteSpace(Username) &&
+                   !string.IsNullOrWhiteSpace(Email) &&
+                   !string.IsNullOrWhiteSpace(Password) &&
+                   Password == ConfirmPassword;
         }
     }
 }

@@ -4,20 +4,20 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using ProjectPfa.Data;
+using static ProjectPfa.Data.DatabaseService;
 
 namespace ProjectPfa.ViewModel
 {
     public class SignInViewModel : BaseViewModel
     {
-        private Database _database;
         private string _email;
         private string _password;
+
         public ICommand SignInCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
 
         public SignInViewModel()
         {
-            _database = new Database();
             SignInCommand = new Command(async () => await SignInAsync());
             ForgotPasswordCommand = new Command(async () => await ForgotPasswordAsync());
         }
@@ -46,46 +46,42 @@ namespace ProjectPfa.ViewModel
 
         private async Task SignInAsync()
         {
-            try
+            // Vérifiez si les champs sont vides
+            if (string.IsNullOrWhiteSpace(Email))
             {
-                if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
-                {
-                    Application.Current.MainPage.DisplayAlert("Error", "Please enter both email and password.", "OK");
-                    return;
-                }
-
-                var user = _database.GetUserByEmailAsync(Email).Result;
-                if (user == null)
-                {
-                    Application.Current.MainPage.DisplayAlert("Error", "Email not found. Please check your email.", "OK");
-                    return;
-                }
-
-                if (user.Password != Password)
-                {
-                    Application.Current.MainPage.DisplayAlert("Error", "Incorrect password. Please try again.", "OK");
-                    return;
-                }
-
-                //App.Current.MainPage = new LandingPage(user.Username, user.ProfilePicturePath);
-                App.Current.MainPage = new ProfilePage();
-                //Application.Current.MainPage.DisplayAlert("Error", "tres bien.", "OK");
-
+                await Application.Current.MainPage.DisplayAlert("Error", "Email cannot be empty.", "OK");
+                return;
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrWhiteSpace(Password))
             {
-                Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "Password cannot be empty.", "OK");
+                return;
             }
-            // Use Shell for navigation
-            // await Shell.Current.GoToAsync("landing");
+
+            // Vérifiez les informations d'identification de l'utilisateur
+            var user = await DatabaseService.VerifyUserAsync(Email, Password);
+
+            if (user == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Invalid email or password.", "OK");
+                return;
+            }
+            // Enregistrer l'utilisateur connecté dans la session
+            UserSession.LoginUser(user.Id);
+
+            // Si tout est correct, naviguez vers la LandingPage
+            App.Current.MainPage = new LandingPage();
         }
 
 
 
         private async Task ForgotPasswordAsync()
         {
-            // Navigate to ForgetPage
-            // await Application.Current.MainPage.Navigation.PushAsync(new ForgetPage());
+            // Naviguer vers la page de récupération du mot de passe
+           // await Application.Current.MainPage.Navigation.PushAsync(new ForgetPage());
         }
+
+
     }
 }

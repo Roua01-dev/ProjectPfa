@@ -3,131 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:ProjectPfa.ViewModel"
              x:Class="ProjectPfa.View.DetailsPage"
-             NavigationPage.HasNavigationBar="False">
-
-    <ContentPage.BindingContext>
-        <local:DetailsViewModel />
-    </ContentPage.BindingContext>
-    <ContentView>
-    <ScrollView Padding="0" >
-
-        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-        <!-- Horizontal Scrollable Image Collection -->
-        <CollectionView ItemsSource="{Binding SelectedProperty.Images}" ItemsLayout="HorizontalList" HeightRequest="250" VerticalOptions="Start">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Image Aspect="AspectFill" Source="{Binding .}" WidthRequest="360" HeightRequest="250" />
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <!-- Grid for Property Details -->
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" Padding="10" Margin="0,260,0,0">
-            <VerticalStackLayout Spacing="10">
-
-                <HorizontalStackLayout Spacing="100" >
-                <VerticalStackLayout>
-                    
-                    <!-- Price -->
-                    <Label Grid.Row="0" Grid.Column="0"
-                   Text="{Binding SelectedProperty.Price, StringFormat='${0:###,###}'}"
-                   TextColor="Black" FontSize="28" FontAttributes="Bold" />
-                    
-                    <!-- Address -->
-                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                    Text="{Binding SelectedProperty.Address}" TextColor="Gray" FontSize="16" />
-                    
-                </VerticalStackLayout>
-                
-
-                <!-- Date -->
-
-                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="0.5" Padding="10" Margin="0,10" >
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="20,20,20,20" />
-                                
-                            </Border.StrokeShape>
-                            <Label Grid.Row="0" Grid.Column="1"
-                                Text="20 hours ago" TextColor="Gray" FontSize="14"
-                                  VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"  />
-
-                        </Border>
-
-                     
-                </HorizontalStackLayout>
+             BackgroundColor="#F4F4F9"
+             NavigationPage.HasNavigationBar="True">
 
 
-                <!-- House Information in Border -->
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <!-- Image Section -->
+            <Frame CornerRadius="10" Padding="0" HasShadow="True">
+                <Image Source="{Binding Property.DefaultImage}" Aspect="AspectFill" HeightRequest="200" />
+            </Frame>
 
-                    <Label Text="House Information" FontAttributes="Bold" FontSize="14" />
-                    <ScrollView Orientation="Horizontal" Padding="15">
-                    <HorizontalStackLayout Spacing="20" Padding="10,0">
-                        <!-- Square Footage -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="0.5" Padding="10" Margin="0,10" >
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,20,20,20" />
-                                    </Border.StrokeShape>
+            <!-- Property Details -->
+            <Label Text="{Binding Property.Title}" FontSize="24" FontAttributes="Bold" TextColor="#34568B" />
+            <Label Text="{Binding Property.Price, StringFormat='Price: ${0,###,###}'}" FontSize="18" TextColor="#333" />
+            <Label Text="{Binding Property.Address}" FontSize="16" TextColor="#666" />
 
-                                    <Label Text="{Binding SelectedProperty.SquareFootage}" FontSize="20" HorizontalOptions="Center"  FontAttributes="Bold"/>
+            
 
-                            </Border>
-                                <Label Text="Square foot" FontSize="14" TextColor="Gray" HorizontalOptions="Center" FontAttributes="Bold" />
+            <!-- Features -->
+            <StackLayout Spacing="10">
+                <Label Text="Features:" FontSize="18" FontAttributes="Bold" TextColor="#34568B" />
+                <Label Text="{Binding Property.Bedrooms, StringFormat='{0} Bedrooms'}" FontSize="16" TextColor="#333" />
+                <Label Text="{Binding Property.Bathrooms, StringFormat='{0} Bathrooms'}" FontSize="16" TextColor="#333" />
+                <Label Text="{Binding Property.Garage, StringFormat='{0} Garage Spaces'}" FontSize="16" TextColor="#333" />
+            </StackLayout>
 
-                        </VerticalStackLayout>
-
-                        <!-- Bedrooms -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="0.5" Padding="10" Margin="0,10" >
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,20,20,20" />
-                                    </Border.StrokeShape>
-                                    <Label Text="{Binding SelectedProperty.Bedrooms}" FontSize="20" HorizontalOptions="Center"  FontAttributes="Bold"/>
-
-                                </Border>
-                                <Label Text="Bedrooms" FontSize="14" TextColor="Gray" HorizontalOptions="Center" FontAttributes="Bold" />
-
-                        </VerticalStackLayout>
-
-                        <!-- Bathrooms -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="0.5" Padding="10" Margin="0,10" >
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,20,20,20" />
-                                    </Border.StrokeShape>
-                                    <Label Text="{Binding SelectedProperty.Bathrooms}" FontSize="20" HorizontalOptions="Center"  FontAttributes="Bold"/>
-                                </Border>
-                                <Label Text="Bathrooms" FontSize="14" TextColor="Gray" HorizontalOptions="Center" FontAttributes="Bold"/>
-
-                        </VerticalStackLayout>
-
-                        <!-- Garage -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="0.5" Padding="10" Margin="0,10" >
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,20,20,20" />
-                                    </Border.StrokeShape>
-                                    <Label Text="{Binding SelectedProperty.Garage}" FontSize="20" HorizontalOptions="Center" FontAttributes="Bold" />
-                                </Border>
-                                <Label Text="Garage" FontSize="14" TextColor="Gray" HorizontalOptions="Center" FontAttributes="Bold" />
-
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </ScrollView>
-
-
-
-            <!-- Property Description -->
-            <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                   Text="{Binding SelectedProperty.Description}" FontSize="16" TextColor="Black" Margin="0,20,0,0" />
-
-            <!-- Buttons for Contact -->
-                    <Button Text="Call"   Margin="0,20,0,0" Style="{StaticResource LargeButtonStyle}" />
-                 
-                </VerticalStackLayout>
-        </Grid>
-    </Grid>
-
+            <!-- Contact Info -->
+            <Label Text="Contact Information:" FontSize="18" FontAttributes="Bold" TextColor="#34568B" />
+            <Label Text="{Binding Property.Numero}" FontSize="16" TextColor="#333" />
+        </StackLayout>
     </ScrollView>
-    </ContentView>
 </ContentPage>

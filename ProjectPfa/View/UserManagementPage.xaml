@@ -1,94 +1,118 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:View="clr-namespace:ProjectPfa.View"
+             xmlns:local="clr-namespace:ProjectPfa.ViewModel"
              x:Class="ProjectPfa.View.UserManagementPage"
              NavigationPage.HasNavigationBar="False"
-             xmlns:local="clr-namespace:ProjectPfa.ViewModel">
+             BackgroundColor="White">
 
     <ContentPage.BindingContext>
         <local:UserManagementViewModel />
     </ContentPage.BindingContext>
 
-    <StackLayout Padding="10">
-        <Label Text="User Management" 
-               FontSize="24" 
-               FontAttributes="Bold"
-               HorizontalOptions="Start" 
-               VerticalOptions="Start" />
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <!-- Horizontal Stack Layout containing the Select All checkbox, SearchBar, and Add User button -->
-        <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
-            <!-- "Select All" checkbox -->
-            <CheckBox x:Name="SelectAllCheckBox"
-                      VerticalOptions="Center"
-                      IsChecked="{Binding IsSelectAllChecked}"
-                      CheckedChanged="OnSelectAllCheckedChanged" />
+        <!-- Page Header -->
+        <StackLayout Grid.Row="0" HorizontalOptions="Center" VerticalOptions="Start" Padding="0,10,0,10">
+            <Label Text="User Management" 
+                   FontSize="26" 
+                   TextColor="#34568B"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+            <Label Text="Manage users efficiently using the tools below."
+                   FontSize="14" 
+                   TextColor="Gray"
+                   HorizontalOptions="Center" />
+        </StackLayout>
 
-            <Label Text="Select All"
-                   VerticalOptions="Center"
-                   FontSize="14"
-                   FontAttributes="Bold" />
-
-            <SearchBar x:Name="UserSearchBar"
-           Placeholder="Search users"
-           VerticalOptions="End"
-           Text="{Binding SearchText}"
-           SearchCommand="{Binding SearchCommand}"
-           SearchCommandParameter="{Binding Text, Source={x:Reference UserSearchBar}}" />
-
-
-            <Button Text="Add User"
-                    Clicked="OnAddUserClicked"
-                    Style="{StaticResource LargeButtonStyle}"/>
+        <!-- Top Bar: Add User and Refresh -->
+        <HorizontalStackLayout Grid.Row="1" HorizontalOptions="FillAndExpand" Spacing="20" Padding="10">
+            <!-- Add User Button -->
             
+            <ImageButton Source="add_user.png"
+                         WidthRequest="50"
+                         HeightRequest="50"
+                         BackgroundColor="Transparent"
+                         Clicked="OnAddUserClicked"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Center" />
+            <!-- Refresh Button -->
             <Image Source="refresh1.png"
-                   Aspect="Center"
-                   WidthRequest="30"
-                   HeightRequest="30"
-                   GestureRecognizers="{TapGestureRecognizer Command={Binding RefreshCommand}}" />
-
-
-            
-            
-            
+               WidthRequest="50"
+               HeightRequest="50">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding RefreshCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+            <SearchBar x:Name="UserSearchBar"
+                       Placeholder="Search users"
+                       Text="{Binding SearchText}"
+                       SearchCommand="{Binding SearchCommand}"
+                       SearchCommandParameter="{Binding Text, Source={x:Reference UserSearchBar}}" 
+                       HorizontalOptions="FillAndExpand"
+                       BackgroundColor="White"
+                       Margin="0,0,10,0" />
+            <!-- Refresh Button -->
+            <ImageButton Source="refresh1.png"
+                         WidthRequest="50"
+                         HeightRequest="50"
+                         BackgroundColor="Transparent"
+                         Command="{Binding RefreshCommand}"
+                         HorizontalOptions="End"
+                         VerticalOptions="Center" />
         </HorizontalStackLayout>
 
-        <!-- CollectionView replacing the ListView -->
-        <CollectionView ItemsSource="{Binding Users}" SelectionMode="None"
-                        VerticalOptions="FillAndExpand">
+        <!-- User List -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Users}" SelectionMode="None"
+                        VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Orientation="Horizontal" Padding="10">
-                        <!-- User Information Section -->
-                        <Image Source="{Binding ProfilePicturePath}"
-                               WidthRequest="50"
-                               HeightRequest="50"
-                               Aspect="AspectFill"
-                               Margin="0,0,10,0" />
+                    <Frame CornerRadius="10" BackgroundColor="White" Margin="5" Padding="10" HasShadow="True">
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <!-- Profile Picture -->
+                            <Image Source="{Binding ProfilePicturePath}"
+                                   WidthRequest="50"
+                                   HeightRequest="50"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center" />
 
-                        <StackLayout VerticalOptions="Center">
-                            <Label Text="{Binding Username}" 
-                                   FontAttributes="Bold" 
-                                   FontSize="16" />
-                            <Label Text="{Binding Email}" 
-                                   FontSize="14" 
-                                   TextColor="Gray" />
+                            <!-- User Information -->
+                            <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand" Spacing="5">
+                                <Label Text="{Binding Username}" 
+                                       FontAttributes="Bold" 
+                                       FontSize="16" 
+                                       TextColor="#333" />
+                                <Label Text="{Binding Email}" 
+                                       FontSize="14" 
+                                       TextColor="Gray" />
+                            </StackLayout>
+
+                            <!-- Action Buttons -->
+                            <StackLayout Orientation="Horizontal" Spacing="10" VerticalOptions="Center">
+                                <Button Text="Update"
+                                        Clicked="OnUpdateUserClicked"
+                                        BackgroundColor="#34568B"
+                                        TextColor="White"
+                                        FontSize="12"
+                                        CornerRadius="5"
+                                        Padding="5" />
+                                <Button Text="Delete"
+                                        Clicked="OnDeleteUserClicked"
+                                        BackgroundColor="#FF6B6B"
+                                        TextColor="White"
+                                        FontSize="12"
+                                        CornerRadius="5"
+                                        Padding="5" />
+                            </StackLayout>
                         </StackLayout>
-
-                        <!-- Buttons Section -->
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Spacing="5">
-                            <!-- Update Button -->
-                            <Button Text="Update"
-                                    Clicked="OnUpdateUserClicked"
-                                    BackgroundColor="LightBlue" />
-
-                            <!-- Delete Button -->
-                            <Button Text="Delete" Clicked="OnDeleteUserClicked" BackgroundColor="LightCoral" />
-                        </StackLayout>
-                    </StackLayout>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-       
-    </StackLayout>
+    </Grid>
 </ContentPage>

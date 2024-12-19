@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Microsoft.Maui.Media;
 using ProjectPfa.Models;
 using ProjectPfa.Data;
-using System.Windows.Input;
 
 namespace ProjectPfa.ViewModel
 {
@@ -38,38 +37,28 @@ namespace ProjectPfa.ViewModel
             get => _profilePicturePath;
             set => SetProperty(ref _profilePicturePath, value);
         }
+
         private User _selectedUser;
-        public User SelectedUser
-        {
-            get => _selectedUser;
-            set => SetProperty(ref _selectedUser, value);
-        }
-        private Database _database;
 
         public Command UpdateAccountClicked { get; }
-        public ICommand UploadProfilePictureCommand => new Command(async () => await UploadProfilePicture()); public UpdateUserViewModel()
+        public ICommand UploadProfilePictureCommand { get; }
+
+        public UpdateUserViewModel(User user)
         {
-            // Constructeur par défaut requis pour l'instanciation dans le XAML
-        }
-        public UpdateUserViewModel(User user):this()
-        {
-            SelectedUser = user;
+            _selectedUser = user;
 
-            // Initialiser les propriétés avec les données de l'utilisateur
-            Username = SelectedUser.Username;
-            Email = SelectedUser.Email;
-            MobileNumber = SelectedUser.MobileNumber;
-            ProfilePicturePath = SelectedUser.ProfilePicturePath;
+            // Initialize properties with user data
+            Username = _selectedUser.Username;
+            Email = _selectedUser.Email;
+            MobileNumber = _selectedUser.MobileNumber;
+            ProfilePicturePath = _selectedUser.ProfilePicturePath;
 
-            // Initialiser les commandes
-            UpdateAccountClicked = new Command(OnUpdateAccountClicked);
-          //  UploadProfilePictureCommand = new Command(OnUploadProfilePicture);
-
-            // Initialiser l'instance de la base de données
-            _database = new Database();
+            // Initialize commands
+            UpdateAccountClicked = new Command(async () => await OnUpdateAccountClicked());
+            UploadProfilePictureCommand = new Command(async () => await UploadProfilePicture());
         }
 
-        private async void OnUpdateAccountClicked()
+        private async Task OnUpdateAccountClicked()
         {
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Email))
             {
@@ -77,29 +66,25 @@ namespace ProjectPfa.ViewModel
                 return;
             }
 
-            // Initialize the database instance
-            var database = new Database();
-
-            // Check if the email has been changed
-            if (Email != SelectedUser.Email)
+            // Check if the email has been changed and is already in use
+            if (Email != _selectedUser.Email)
             {
-                // Check if the new email is already in use by another user
-                var existingUser = await database.GetUserByEmailAsync(Email);
-                if (existingUser != null && existingUser.Id != SelectedUser.Id)
+                var existingUser = await DatabaseService.GetUserByEmailAsync(Email);
+                if (existingUser != null && existingUser.Id != _selectedUser.Id)
                 {
                     await Application.Current.MainPage.DisplayAlert("Error", "This email address is already in use.", "OK");
                     return;
                 }
             }
 
-            // Update the selected user
-            SelectedUser.Username = Username;
-            SelectedUser.Email = Email;
-            SelectedUser.MobileNumber = MobileNumber;
-            SelectedUser.ProfilePicturePath = ProfilePicturePath;
+            // Update the user details
+            _selectedUser.Username = Username;
+            _selectedUser.Email = Email;
+            _selectedUser.MobileNumber = MobileNumber;
+            _selectedUser.ProfilePicturePath = ProfilePicturePath;
 
             // Update the user in the database
-            int rowsAffected = await database.UpdateUserAsync(SelectedUser);
+            int rowsAffected = await DatabaseService.UpdateUserAsync(_selectedUser);
 
             if (rowsAffected > 0)
             {
@@ -112,30 +97,31 @@ namespace ProjectPfa.ViewModel
             }
         }
 
-
         private async Task UploadProfilePicture()
         {
-            var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+            try
             {
-                Title = "Please pick a photo"
-            });
-
-            if (result != null)
-            {
-                var stream = await result.OpenReadAsync();
-                var filePath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
-                using (var fileStream = File.OpenWrite(filePath))
+                var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
                 {
-                    await stream.CopyToAsync(fileStream);
-                }
+                    Title = "Please pick a photo"
+                });
 
-                ProfilePicturePath = filePath;
+                if (result != null)
+                {
+                    var stream = await result.OpenReadAsync();
+                    var filePath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+                    using (var fileStream = File.OpenWrite(filePath))
+                    {
+                        await stream.CopyToAsync(fileStream);
+                    }
+
+                    ProfilePicturePath = filePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Unable to pick photo: {ex.Message}", "OK");
             }
         }
-
-
-
-
     }
-
 }
